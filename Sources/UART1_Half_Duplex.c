@@ -31,17 +31,42 @@ void UART1_IRQHandler(void){
 
 int send_command(int instance, char * command_ptr, int byteCountBuff, int wait_time,char * response ){
 	PRINTF("\r\nInside send command\r\n");
-	int i =0;
+	int i =0, x;
 	UART_DRV_SendDataBlocking(instance, command_ptr, byteCountBuff, wait_time);
-	 while(UART_DRV_ReceiveDataBlocking (instance, response, sizeof(response),16000u) == kStatus_UART_Success ){
+	printf("Sent\r\n");
+	 while(UART_DRV_ReceiveDataBlocking (instance, response, sizeof(response),200000u) == kStatus_UART_Success ){
 		 PRINTF("Recieved:\r\n");
-		 for(i=0;i<sizeof(response);i++)
-		 PRINTF("%c",response[i]);
+		 for(i=0;i<=sizeof(response);i++)
+		 {
+//			 if(response[i] == '\r')
+//				 PRINTF("HI\n");
+//		 while(response[i] != '\0')
+//		 {
+			 PRINTF("%c",response[i]);
+//			 if(response[i] == '\r')
+//						 PRINTF("\\r");
+//			 if(response[i] == '\n')
+//									 PRINTF("\\n");
+			 //i++;
+		 }
+
+		 //PRINTF("%c",response[i]);
+		 //}
+//		 while(*response != '\0')
+//		 	{
+//		 		PUTCHAR(*response);
+//		 		if(*response++ == '\r')
+//		 			PUTCHAR('\n');
+//		 	}
 	 }
-	 if(strstr(response - sizeof(response), "Goodnight") ){
-		PRINTF("\nRecived Goodbye in UART\n\r");
-		return 0;
-	}
+//	 if(strcmp(response[0],"ER") ){
+//		PRINTF("\nRecived OK in UART\n\r");
+//		return 0;
+//	}
+//	 else
+//	 {
+//		 return -2;
+//	 }
 
 }
 int main(void)
@@ -50,9 +75,13 @@ int main(void)
 	uart_user_config_t uartConfig;
 	long int x;
 
-	char AT[] = "\nTA";
-	char response[20];
-	enum STATES {INIT, CHECK_PIN};
+
+	char AT[] = "AT+GMI\r";
+	char PIN_CHECK[] = "AT+CPIN?\r";//Setting up a char variable PIN_CHECK for the a long string
+	//char  PIN_ENTER[] = "AT+CPIN=\"1234\"\r\n";//Setting up a char variable ENTER_PIN for the a long string
+	//char  CREG[] = "AT+CREG?\r\n";//Setting up a char variable CREG for the a long string
+	uint8_t response[100];
+	enum STATES {INIT, CHECK_PIN,ENTER_PIN};
 	enum STATES CurrentState = INIT;
 	uint32_t byteCountBuff = 0;
     //Initialise the FRDM-KL26Z Board
@@ -71,33 +100,40 @@ int main(void)
 
 	PRINTF("Full test of send/recieve on UART1\r\n");
 
-	int i = 0;
+	int i = 0,y;
+	for(y=0;y<sizeof(response);y++)
+		response[i]=0;
+
 	byteCountBuff = sizeof(AT);
 	wait_time = 16000u;
     while(1) {
-    	//UART_DRV_SendDataBlocking(1, AT, byteCountBuff, 16000u);
-		//    	 while(UART_DRV_ReceiveDataBlocking ( 1, rxBuff, sizeof(response),16000u) == kStatus_UART_Success )
-		//    	 {
-		//    		 for(i=0;i<sizeof(response);i++)
-		//    		 PRINTF("%c",response[i]);
-		//    	 }
-		//    	 for(x=0;x<10000000;x++);
-    	 
-    	 switch(CurrentState)
+    	switch(CurrentState)
     	 		{
     	 		case INIT:	//Check connection to MODEM by sending AT. Expected response is OK
     	 			result = send_command(1,AT,byteCountBuff,wait_time,response);
-    	 			//send_command(int instance, char * command_ptr, int byteCountBuff, int wait_time) 
-    	 			//send_command(AT, response, sizeof(response), 2000);
-    	 			if(result == SUCCESS || result == ERROR)
-    	 			{
-    	 				//printf_response(response);
-    	 			}
     	 			if(result == SUCCESS)	//"OK" was returned by MODEM
     	 				CurrentState = CHECK_PIN;
     	 			break;
     	 		case CHECK_PIN:	//Check connection to MODEM by sending AT. Expected response is OK
-					PRINTF("CHECK_PIN");
+					PRINTF("CHECK_PIN\r");
+//					byteCountBuff = sizeof(PIN_CHECK);
+//					result = send_command(1,PIN_CHECK,byteCountBuff,wait_time,response);
+//					if(result == SUCCESS)	//"OK" was returned by MODEM
+//						CurrentState = ENTER_PIN;
+//					else if(result == ERROR)
+//						CurrentState = ENTER_PIN;
+					break;
+    	 		case ENTER_PIN:	//Check connection to MODEM by sending AT. Expected response is OK
+					PRINTF("ENTER_PIN\r");
+//					result = send_command(1,AT,byteCountBuff,wait_time,response);
+//					//send_command(int instance, char * command_ptr, int byteCountBuff, int wait_time)
+//					//send_command(AT, response, sizeof(response), 2000);
+//					if(result == SUCCESS || result == ERROR)
+//					{
+//						//printf_response(response);
+//					}
+//					if(result == SUCCESS)	//"OK" was returned by MODEM
+//						CurrentState = CHECK_PIN;
 					break;
     	 		default:
     	 			break;
