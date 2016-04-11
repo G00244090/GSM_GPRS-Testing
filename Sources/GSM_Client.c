@@ -266,38 +266,38 @@ int main(void)
 	UART1_C2 |= UART_C2_RIE_MASK;
 
     while(1){
-    	PRINTF("Speed is : %s",speed);
-    	if (speed == "30")
-    	{
-    		PRINTF("*30 *");
-    	}
-    	else if (strcmp(speed, "50") == 0)
-    	{
-    		PRINTF("*50 *");
-    	}
-    	else if (strcmp(speed, "60") == 0)
-		{
-			PRINTF("*60 *");
-		}
-    	else /* default: */
-    	{
-    	}
-//    	switch(speed){
-//					case "30":	//Check connection to MODEM by sending AT. Expected response is OK
-//							PRINTF("%S",speed);
-//							if(b<1){
-//							PRINTF("*30 *");
-//							b++;
-//							}
-//							break;
-//					default:
-//							break;
-//						}//end switch-case
+//    	PRINTF("Speed is : %s",speed);
+//    	if ((speed[0] == '3') && (speed[1] == '0'))
+//    	{
+//    		PRINTF("*30 *");
 //    	}
+//    	else if (strcmp(speed, "50") == 0)
+//    	{
+//    		PRINTF("*50 *");
+//    	}
+//    	else if (strcmp(speed, "60") == 0)
+//		{
+//			PRINTF("*60 *");
+//		}
+//    	else /* default: */
+//    	{
+//    	}
+    	switch(cc){
+					case '3':	//Check connection to MODEM by sending AT. Expected response is OK
+							//PRINTF("%S",speed);
+							if(b<1){
+							PRINTF("*30 *");
+							b++;
+							}
+							break;
+					default:
+							break;
+						}//end switch-case
+    	}
     /* Never leave main */
     return 0;
 }
-}
+
 ////////////////////////////////////////////////////////////////////////////////
 // EOF
 ////////////////////////////////////////////////////////////////////////////////
