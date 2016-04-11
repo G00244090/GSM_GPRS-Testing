@@ -10,7 +10,12 @@
 #include "fsl_debug_console.h"
 #include "fsl_uart_driver.h"
 
+int k=0;
 char ch;
+char cc;
+char speed[2];
+char server_update[80];
+int set =0;
 long int x;
 int recieve_size=0;
 uint32_t byteCountBuff = 0;
@@ -29,10 +34,25 @@ extern void UART_DRV_IRQHandler(uint32_t instance);
 /*******************************************************************************
  * Code
  ******************************************************************************/
-
-/* Implementation of UART1 handler named in startup code. */
 void UART1_IRQHandler(void){
-	UART_DRV_IRQHandler(1);
+	if(set == 1){
+		int l=0,size;
+		while(UART1_S1 & UART_S1_RDRF_MASK){
+			if(UART1_D != '\0'){
+				server_update[l++]=UART1_D;
+				PRINTF("CHARACTER RECIVED %c\r\n",UART1_D);
+			}
+			else{
+				//memset
+			}
+		 }
+	}
+	else{
+		UART_DRV_IRQHandler(1);
+	}
+	cc=server_update[0];
+	speed[0]=server_update[0];
+	speed[1]=server_update[1];
 }
 
 int send_command(int instance, char * command_ptr, int byteCountBuff, int wait_time,char * response,int recieve_size){
@@ -65,6 +85,7 @@ int send_command(int instance, char * command_ptr, int byteCountBuff, int wait_t
 void GSM_init(){
 	int i = 0,y;
 
+	char ATE0[] = "ATE0\r";
 	char AT[] = "AT\r";
 	char CIPSHUT[] = "AT+CIPSHUT\r";
 	char CIPSMUX[] = "AT+CIPMUX=0\r";
@@ -72,7 +93,7 @@ void GSM_init(){
 	char CSTT[] = "AT+CSTT=\"www\","",""\r";
 	char CIICR[] = "AT+CIICR\r";
 	char CIFSR[] = "AT+CIFSR\r";
-	char CIPSTART[] = "AT+CIPSTART=\"TCP\",\"86.46.63.162\",\"27\"\r";
+	char CIPSTART[] = "AT+CIPSTART=\"TCP\",\"31.200.188.200\",\"27\"\r";
 
 
 	char response[200];
@@ -80,9 +101,19 @@ void GSM_init(){
 			response[i]='c';
 	byteCountBuff = sizeof(AT);
 	wait_time = 16000u;
-	enum STATES {INIT,SHUT,MUX,ATT,STT,ICR,FSR,CONNECT};
-	enum STATES CurrentState = INIT;
+	enum STATES {ECHO,INIT,SHUT,MUX,ATT,STT,ICR,FSR,CONNECT};
+	enum STATES CurrentState = ECHO;
 	switch(CurrentState){
+				case ECHO:	//Check connection to MODEM by sending AT. Expected response is OK
+					recieve_size = 4;
+					byteCountBuff = sizeof(ATE0);
+					result = send_command(1,ATE0,byteCountBuff,wait_time,response,recieve_size);
+					if(result == SUCCESS){
+						//PRINTF("returned ATtt\r\n");//"OK" was returned by MODEM
+						CurrentState = INIT;
+					}
+					else
+						break;
 				case INIT:	//Check connection to MODEM by sending AT. Expected response is OK
 					recieve_size = 4;
 					byteCountBuff = sizeof(AT);
@@ -94,7 +125,7 @@ void GSM_init(){
 					else
 						break;
 				case SHUT:	//Check connection to MODEM by sending AT. Expected response is OK
-					recieve_size =10;
+					recieve_size =9;
 					byteCountBuff = sizeof(CIPSHUT);
 					result = send_command(1,CIPSHUT,byteCountBuff,wait_time,response,recieve_size);
 					if(result == SUCCESS){
@@ -104,7 +135,7 @@ void GSM_init(){
 					else
 						break;
 				case MUX:	//Check connection to MODEM by sending AT. Expected response is OK
-					recieve_size = 6;
+					recieve_size = 4;
 					byteCountBuff = sizeof(CIPSMUX);
 					result = send_command(1,CIPSMUX,byteCountBuff,wait_time,response,recieve_size);
 					if(result == SUCCESS){
@@ -114,7 +145,7 @@ void GSM_init(){
 					else
 						break;
 				case ATT:	//Check connection to MODEM by sending AT. Expected response is OK
-					recieve_size =6;
+					recieve_size =4;
 					byteCountBuff = sizeof(CGATT);
 					result = send_command(1,CGATT,byteCountBuff,wait_time,response,recieve_size);
 					if(result == SUCCESS){
@@ -124,7 +155,7 @@ void GSM_init(){
 					else
 						break;
 				case STT:	//Check connection to MODEM by sending AT. Expected response is OK
-					recieve_size =6;
+					recieve_size =4;
 					byteCountBuff = sizeof(CSTT);
 					result = send_command(1,CSTT,byteCountBuff,wait_time,response,recieve_size);
 					if(result == SUCCESS){
@@ -134,7 +165,7 @@ void GSM_init(){
 					else
 						break;
 				case ICR:	//Check connection to MODEM by sending AT. Expected response is OK
-					recieve_size =6;
+					recieve_size =4;
 					byteCountBuff = sizeof(CIICR);
 					result = send_command(1,CIICR,byteCountBuff,wait_time,response,recieve_size);
 					if(result == SUCCESS){
@@ -144,7 +175,7 @@ void GSM_init(){
 					else
 						break;
 				case FSR:	//Check connection to MODEM by sending AT. Expected response is OK
-					recieve_size =18;
+					recieve_size =15;
 					byteCountBuff = sizeof(CIFSR);
 					result = send_command(1,CIFSR,byteCountBuff,wait_time,response,recieve_size);
 					if(result == SUCCESS){
@@ -154,7 +185,7 @@ void GSM_init(){
 					else
 						break;
 				case CONNECT:
-					recieve_size =14;
+					recieve_size =20;
 						byteCountBuff = sizeof(CIPSTART);
 						result = send_command(1,CIPSTART,byteCountBuff,wait_time,response,recieve_size);
 						if(result == SUCCESS){
@@ -210,9 +241,9 @@ int main(void)
 {
 	uart_state_t uartState; // user provides memory for the driver state structure
 	uart_user_config_t uartConfig;
-	int y =0,i=0;
-	char AT[] = "AT\r";
-	char send[] = "AT+CIPSEND\r";
+	int y =0,i=0,b =0;
+//	enum STATES {'1'};
+//	enum STATES CurrentState = ch;
 	char server_response[200];
 		for(y=0;y<=sizeof(server_response);y++)
 			server_response[i]='c';
@@ -229,33 +260,43 @@ int main(void)
 	UART_DRV_Init(1, &uartState,&uartConfig);
 	PRINTF("Full test of send/recieve on UART1\r\n");
 	GSM_init();
+	set =1;
+	NVIC_ClearPendingIRQ(13);
+	NVIC_EnableIRQ(13);
+	UART1_C2 |= UART_C2_RIE_MASK;
 
     while(1){
-    	if(i<3){
-    		update();
-    		i++;
+    	PRINTF("Speed is : %s",speed);
+    	if (speed == "30")
+    	{
+    		PRINTF("*30 *");
     	}
-    		//returnValue = UART_DRV_ReceiveData(0,server_response,recieve_size);//Buffer size in bytes to accept all of the me
-
-//    		while (kStatus_UART_RxBusy == UART_DRV_GetReceiveStatus(0, NULL)){}
-//
-//    		if(returnValue == kStatus_UART_Success){
-//    			PRINTF("server_response Recieved:\r\n");
-//    			while(server_response[i] != '\0')
-//    			{
-//    				 PRINTF("%c",server_response[i]);
-//    				 i++;
-//    			}
-//    			PRINTF("\r\n");
-//
-//    			if(strstr(server_response,"OK") || strstr(server_response,">") || strstr(server_response,"+CMSG:")  == 0){
-//    				PRINTF("Response matches\r\n");
-//    			}
-//    		}
-
-    }
+    	else if (strcmp(speed, "50") == 0)
+    	{
+    		PRINTF("*50 *");
+    	}
+    	else if (strcmp(speed, "60") == 0)
+		{
+			PRINTF("*60 *");
+		}
+    	else /* default: */
+    	{
+    	}
+//    	switch(speed){
+//					case "30":	//Check connection to MODEM by sending AT. Expected response is OK
+//							PRINTF("%S",speed);
+//							if(b<1){
+//							PRINTF("*30 *");
+//							b++;
+//							}
+//							break;
+//					default:
+//							break;
+//						}//end switch-case
+//    	}
     /* Never leave main */
     return 0;
+}
 }
 ////////////////////////////////////////////////////////////////////////////////
 // EOF

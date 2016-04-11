@@ -122,7 +122,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Sources/uart1_test.c|Sources/MyUart1.c|Sources/transmit_nonBlock.c|Sources/main3.c|Sources/simple_AT.c|Sources/main4.c|Sources/main2.c|Sources/main.c|Utilities/fsl_misc_utilities.c|Sources/main_leds.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Sources/Client_revieve.c|Sources/UART1_Half_Duplex.c|Sources/uart1_test.c|Sources/MyUart1.c|Sources/transmit_nonBlock.c|Sources/main3.c|Sources/simple_AT.c|Sources/main4.c|Sources/main2.c|Sources/main.c|Utilities/fsl_misc_utilities.c|Sources/main_leds.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

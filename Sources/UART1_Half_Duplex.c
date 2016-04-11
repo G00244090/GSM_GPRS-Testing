@@ -104,7 +104,7 @@ int main(void)
 				}
 				break;
 			case TXT_MODE:	//Check connection to MODEM by sending AT. Expected response is OK
-				recieve_size =4;
+				recieve_size =6;
 				byteCountBuff = sizeof(CMGF);
 				result = send_command(1,CMGF,byteCountBuff,wait_time,response,recieve_size);
 				if(result == SUCCESS){

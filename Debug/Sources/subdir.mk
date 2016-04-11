@@ -4,13 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Sources/UART1_Half_Duplex.c 
+../Sources/GSM_Client.c 
 
 OBJS += \
-./Sources/UART1_Half_Duplex.o 
+./Sources/GSM_Client.o 
 
 C_DEPS += \
-./Sources/UART1_Half_Duplex.d 
+./Sources/GSM_Client.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
