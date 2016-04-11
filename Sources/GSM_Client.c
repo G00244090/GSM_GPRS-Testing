@@ -12,6 +12,7 @@
 
 int k=0;
 char ch;
+int b =0;
 char cc;
 char speed[2];
 char server_update[80];
@@ -39,6 +40,7 @@ void UART1_IRQHandler(void){
 		int l=0,size;
 		while(UART1_S1 & UART_S1_RDRF_MASK){
 			if(UART1_D != '\0'){
+				b=0;
 				server_update[l++]=UART1_D;
 				PRINTF("CHARACTER RECIVED %c\r\n",UART1_D);
 			}
@@ -241,7 +243,7 @@ int main(void)
 {
 	uart_state_t uartState; // user provides memory for the driver state structure
 	uart_user_config_t uartConfig;
-	int y =0,i=0,b =0;
+	int y =0,i=0;
 //	enum STATES {'1'};
 //	enum STATES CurrentState = ch;
 	char server_response[200];
@@ -287,6 +289,55 @@ int main(void)
 							//PRINTF("%S",speed);
 							if(b<1){
 							PRINTF("*30 *");
+							b++;
+							}
+							break;
+					case '4':	//Check connection to MODEM by sending AT. Expected response is OK
+							//PRINTF("%S",speed);
+							if(b<1){
+							PRINTF("*40 *");
+							b++;
+							}
+							break;
+					case '5':	//Check connection to MODEM by sending AT. Expected response is OK
+							//PRINTF("%S",speed);
+							if(b<1){
+							PRINTF("*50 *");
+							b++;
+							}
+							break;
+					case '6':	//Check connection to MODEM by sending AT. Expected response is OK
+							//PRINTF("%S",speed);
+							if(b<1){
+							PRINTF("*60 *");
+							b++;
+							}
+							break;
+					case '7':	//Check connection to MODEM by sending AT. Expected response is OK
+							//PRINTF("%S",speed);
+							if(b<1){
+							PRINTF("*70 *");
+							b++;
+							}
+							break;
+					case '8':	//Check connection to MODEM by sending AT. Expected response is OK
+							//PRINTF("%S",speed);
+							if(b<1){
+							PRINTF("*80 *");
+							b++;
+							}
+							break;
+					case '9':	//Check connection to MODEM by sending AT. Expected response is OK
+							//PRINTF("%S",speed);
+							if(b<1){
+							PRINTF("*90 *");
+							b++;
+							}
+							break;
+					case '1':	//Check connection to MODEM by sending AT. Expected response is OK
+							//PRINTF("%S",speed);
+							if(b<1){
+							PRINTF("*100 *");
 							b++;
 							}
 							break;
