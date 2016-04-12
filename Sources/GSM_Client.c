@@ -39,7 +39,8 @@ void UART1_IRQHandler(void){
 	if(set == 1){
 		int l=0,size;
 		while(UART1_S1 & UART_S1_RDRF_MASK){
-			if(UART1_D != '\0'){
+			server_update[l]=UART1_D;
+			if(UART1_D != '\r\n'){
 				b=0;
 				server_update[l++]=UART1_D;
 				PRINTF("CHARACTER RECIVED %c\r\n",UART1_D);
@@ -95,7 +96,7 @@ void GSM_init(){
 	char CSTT[] = "AT+CSTT=\"www\","",""\r";
 	char CIICR[] = "AT+CIICR\r";
 	char CIFSR[] = "AT+CIFSR\r";
-	char CIPSTART[] = "AT+CIPSTART=\"TCP\",\"31.200.188.200\",\"27\"\r";
+	char CIPSTART[] = "AT+CIPSTART=\"TCP\",\"31.200.190.72\",\"27\"\r";
 
 
 	char response[200];
