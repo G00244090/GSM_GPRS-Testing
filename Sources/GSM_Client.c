@@ -40,7 +40,7 @@ void UART1_IRQHandler(void){
 		int l=0,size;
 		while(UART1_S1 & UART_S1_RDRF_MASK){
 			server_update[l]=UART1_D;
-			if(UART1_D != '\r\n'){
+			if(UART1_D != 0x0D){
 				b=0;
 				server_update[l++]=UART1_D;
 				PRINTF("CHARACTER RECIVED %c\r\n",UART1_D);
@@ -53,7 +53,7 @@ void UART1_IRQHandler(void){
 	else{
 		UART_DRV_IRQHandler(1);
 	}
-	cc=server_update[0];
+	cc=server_update[1];
 	speed[0]=server_update[0];
 	speed[1]=server_update[1];
 }
@@ -96,7 +96,7 @@ void GSM_init(){
 	char CSTT[] = "AT+CSTT=\"www\","",""\r";
 	char CIICR[] = "AT+CIICR\r";
 	char CIFSR[] = "AT+CIFSR\r";
-	char CIPSTART[] = "AT+CIPSTART=\"TCP\",\"31.200.190.72\",\"27\"\r";
+	char CIPSTART[] = "AT+CIPSTART=\"TCP\",\"31.200.186.13\",\"27\"\r";
 
 
 	char response[200];
@@ -291,20 +291,23 @@ int main(void)
 							if(b<1){
 							PRINTF("*30 *");
 							b++;
+							cc=0;
 							}
 							break;
-					case '4':	//Check connection to MODEM by sending AT. Expected response is OK
-							//PRINTF("%S",speed);
-							if(b<1){
-							PRINTF("*40 *");
-							b++;
-							}
-							break;
+//					case '4':	//Check connection to MODEM by sending AT. Expected response is OK
+//							//PRINTF("%S",speed);
+//							if(b<1){
+//							PRINTF("*40 *");
+//							b++;
+//							cc=0;
+//							}
+//							break;
 					case '5':	//Check connection to MODEM by sending AT. Expected response is OK
 							//PRINTF("%S",speed);
 							if(b<1){
 							PRINTF("*50 *");
 							b++;
+							cc=0;
 							}
 							break;
 					case '6':	//Check connection to MODEM by sending AT. Expected response is OK
@@ -312,6 +315,7 @@ int main(void)
 							if(b<1){
 							PRINTF("*60 *");
 							b++;
+							cc=0;
 							}
 							break;
 					case '7':	//Check connection to MODEM by sending AT. Expected response is OK
@@ -319,6 +323,7 @@ int main(void)
 							if(b<1){
 							PRINTF("*70 *");
 							b++;
+							cc=0;
 							}
 							break;
 					case '8':	//Check connection to MODEM by sending AT. Expected response is OK
@@ -326,6 +331,7 @@ int main(void)
 							if(b<1){
 							PRINTF("*80 *");
 							b++;
+							cc=0;
 							}
 							break;
 					case '9':	//Check connection to MODEM by sending AT. Expected response is OK
@@ -333,6 +339,7 @@ int main(void)
 							if(b<1){
 							PRINTF("*90 *");
 							b++;
+							cc=0;
 							}
 							break;
 					case '1':	//Check connection to MODEM by sending AT. Expected response is OK
@@ -340,6 +347,23 @@ int main(void)
 							if(b<1){
 							PRINTF("*100 *");
 							b++;
+							cc=0;
+							}
+							break;
+					case 'Z':	//Check connection to MODEM by sending AT. Expected response is OK
+							//PRINTF("%S",speed);
+							if(b<1){
+							PRINTF("*120 *");
+							b++;
+							cc=0;
+							}
+							break;
+					case 'E':	//Check connection to MODEM by sending AT. Expected response is OK
+							//PRINTF("%S",speed);
+							if(b<1){
+							PRINTF("*Eme*");
+							b++;
+							cc=0;
 							}
 							break;
 					default:
