@@ -96,7 +96,7 @@ void GSM_init(){
 	char CSTT[] = "AT+CSTT=\"www\","",""\r";
 	char CIICR[] = "AT+CIICR\r";
 	char CIFSR[] = "AT+CIFSR\r";
-	char CIPSTART[] = "AT+CIPSTART=\"TCP\",\"31.200.186.13\",\"27\"\r";
+	char CIPSTART[] = "AT+CIPSTART=\"TCP\",\"92.251.177.160\",\"27\"\r";
 
 
 	char response[200];
